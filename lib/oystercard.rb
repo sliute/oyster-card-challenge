@@ -7,9 +7,15 @@ class Oystercard
     @balance = 0
   end
 
-  def top_up(amt)
-    raise 'Balance cannot exceed 90' if (balance + amt) > MAX_BALANCE
-    @balance += amt
+  def top_up(top_up_amt)
+    raise 'Balance cannot exceed 90' if exceeds_max_balance?(top_up_amt)
+    @balance += top_up_amt
+  end
+
+private
+
+  def exceeds_max_balance?(top_up_amt)
+    (balance + top_up_amt) > MAX_BALANCE
   end
 
 end

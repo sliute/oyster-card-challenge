@@ -5,7 +5,6 @@ describe Oystercard do
 
   describe ".balance" do
     it 'initialises with a balance of 0' do
-      #card = Oystercard.new
       expect(oystercard.balance).to eq 0
     end
   end
@@ -20,6 +19,5 @@ describe Oystercard do
       expect{ oystercard.top_up(91) }.to raise_error("Balance cannot exceed #{maximum_bal}")
     end
   end
-
 
 end
