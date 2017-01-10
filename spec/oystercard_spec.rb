@@ -74,7 +74,7 @@ describe Oystercard do
 
     it "entry_station is nil once touched out" do
       oystercard.touch_in(station)
-      oystercard.touch_out(station)
+      oystercard.touch_out
       expect(oystercard.entry_station).to eq nil
     end
 
