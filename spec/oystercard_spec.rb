@@ -4,6 +4,12 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:station) { instance_double("Station") }
 
+  context "on initialisation" do
+    it "defaults to nil entry station" do
+      expect(oystercard.entry_station).to eq nil
+    end
+  end
+
   describe "#balance" do
     it 'initialises with a balance of 0' do
       expect(oystercard.balance).to eq 0
@@ -32,19 +38,17 @@ describe Oystercard do
     context "balance is MIN_JOURNEY_BALANCE + 10" do
       before(:each) do
         oystercard.top_up(min_journey_balance+ 10)
+        oystercard.touch_in(station)
       end
       it 'in_journey is true once touched in' do
-        oystercard.touch_in(station)
         is_expected.to be_in_journey
       end
       it "remembers the touch in station" do
-        oystercard.touch_in(station)
         expect(oystercard.entry_station).to eq station
       end
       context "already touched in" do
         it "raises error" do
             message = "Cannot touch in, already touched in!"
-            oystercard.touch_in(station)
             expect{oystercard.touch_in(subject)}.to raise_error(RuntimeError, message)
         end
       end
@@ -66,6 +70,12 @@ describe Oystercard do
       oystercard.touch_in(station)
       oystercard.touch_out
       is_expected.not_to be_in_journey
+    end
+
+    it "entry_station is nil once touched out" do
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      expect(oystercard.entry_station).to eq nil
     end
 
     it 'deducts the journey fare from the oystercard balance' do

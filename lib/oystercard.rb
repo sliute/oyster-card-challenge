@@ -9,6 +9,7 @@ class Oystercard
   def initialize
     @balance = 0
     @in_journey = false
+    @entry_station = nil
   end
 
   def top_up(top_up_amt)
@@ -24,10 +25,11 @@ class Oystercard
     @entry_station = station
   end
 
-  def touch_out
+  def touch_out(station)
     fail 'Cannot touch out, already touched out!' unless in_journey?
     @in_journey = false
     deduct(1)
+    @entry_station = nil
   end
 
 private
