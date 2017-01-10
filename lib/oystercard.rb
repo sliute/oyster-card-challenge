@@ -22,13 +22,15 @@ class Oystercard
     fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
     fail 'Cannot touch in, already touched in!' if in_journey?
     @entry_station = entry_station
+    @exit_station = nil
   end
 
   def touch_out(exit_station)
     fail 'Cannot touch out, already touched out!' unless in_journey?
     deduct(1)
-    @entry_station = nil
     @exit_station = exit_station
+    add_journey
+    @entry_station = nil
   end
 
   def in_journey?
@@ -36,6 +38,10 @@ class Oystercard
   end
 
 private
+
+  def add_journey
+    @journeys << { entry: entry_station, exit: exit_station }
+  end
 
   def exceeds_max_balance?(top_up_amt)
     (balance + top_up_amt) > MAX_BALANCE

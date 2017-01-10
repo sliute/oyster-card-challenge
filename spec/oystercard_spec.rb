@@ -67,43 +67,35 @@ describe Oystercard do
   describe "#touch_out" do
     before(:each) do
       oystercard.top_up(min_journey_balance+ 10)
-    end
-    it "in_journey is false once touched out" do
       oystercard.touch_in(entry_station)
-      oystercard.touch_out(exit_station)
-      is_expected.not_to be_in_journey
     end
-
-    it "entry_station is nil once touched out" do
-      oystercard.touch_in(entry_station)
-      oystercard.touch_out(exit_station)
-      expect(oystercard.entry_station).to eq nil
-    end
-
-    it 'deducts the journey fare from the oystercard balance' do
-      oystercard.touch_in(entry_station)
-      expect { oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
-    end
-
-    it "sets exit_station" do
-      oystercard.touch_in(entry_station)
-      oystercard.touch_out(exit_station)
-      expect(oystercard.exit_station).to eq exit_station
-    end
-
-    it "adds journey to journeys array" do
-      pending "changes to touch out method"
-      oystercard.touch_in(entry_station)
-      oystercard.touch_out(exit_station)
-      journey = { entry: entry_station, exit: exit_station }
-      expect(oystercard.journeys).to include(journey)
-    end
-
-    context "already touched out" do
-      it 'raise error' do
-        message = 'Cannot touch out, already touched out!'
-        expect { oystercard.touch_out(exit_station) }.to raise_error(RuntimeError, message)
+    context "have touched in and out" do
+      before(:each) do
+        oystercard.touch_out(exit_station)
       end
+      it "in_journey is false once touched out" do
+        is_expected.not_to be_in_journey
+      end
+
+      it "entry_station is nil once touched out" do
+        expect(oystercard.entry_station).to eq nil
+      end
+      it "sets exit_station" do
+        expect(oystercard.exit_station).to eq exit_station
+      end
+      it "adds journey to journeys array" do
+        journey = { entry: entry_station, exit: exit_station }
+        expect(oystercard.journeys).to include(journey)
+      end
+      context "already touched out" do
+        it 'raise error' do
+          message = 'Cannot touch out, already touched out!'
+          expect { oystercard.touch_out(exit_station) }.to raise_error(RuntimeError, message)
+        end
+      end
+    end
+    it 'deducts the journey fare from the oystercard balance' do
+      expect {oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
     end
   end
 end
