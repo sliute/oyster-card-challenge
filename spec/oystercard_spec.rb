@@ -26,8 +26,8 @@ describe Oystercard do
     end
   end
 
+  min_journey_balance = described_class::MIN_JOURNEY_BALANCE
   describe "#touch_in" do
-      min_journey_balance = described_class::MIN_JOURNEY_BALANCE
     context "balance is MIN_JOURNEY_BALANCE + 10" do
       before(:each) do
         oystercard.top_up(min_journey_balance+ 10)
@@ -53,29 +53,26 @@ describe Oystercard do
     end
   end
 
-    describe "#touch_out" do
-      it "in_journey is false once touched out" do
-        oystercard.touch_in
-        oystercard.touch_out
-        is_expected.not_to be_in_journey
-      end
-
-      it 'deducts the journey fare from the oystercard balance' do
-        oystercard.touch_in
-        expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
-      end
-
-      context "already touched out" do
-        it 'raise error' do
-          message = 'Cannot touch out, already touched out!'
-          expect { oystercard.touch_out }.to raise_error(RuntimeError, message)
-        end
-
-      end
+  describe "#touch_out" do
+    before(:each) do
+      oystercard.top_up(min_journey_balance+ 10)
+    end
+    it "in_journey is false once touched out" do
+      oystercard.touch_in
+      oystercard.touch_out
+      is_expected.not_to be_in_journey
     end
 
+    it 'deducts the journey fare from the oystercard balance' do
+      oystercard.touch_in
+      expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
+    end
 
+    context "already touched out" do
+      it 'raise error' do
+        message = 'Cannot touch out, already touched out!'
+        expect { oystercard.touch_out }.to raise_error(RuntimeError, message)
+      end
+    end
   end
-
-
 end
