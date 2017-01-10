@@ -19,6 +19,13 @@ class Oystercard
     @balance -= deduct_amt
   end
 
+  def touch_in
+    @in_journey = true
+  end
+
+  def touch_out
+  end
+
 private
 
   def exceeds_max_balance?(top_up_amt)

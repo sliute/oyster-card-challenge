@@ -35,11 +35,14 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
-    it { is_expected.to respond.to(:touch_in) }
+    it 'in_journey is true once touched in' do
+      oystercard.touch_in
+      is_expected.to be_in_journey
+    end
   end
 
   describe "#touch_out" do
-    it { is_expected.to respond.to(:touch_out) }
+    it { is_expected.to respond_to(:touch_out) }
   end
 
 end
