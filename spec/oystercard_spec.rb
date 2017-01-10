@@ -32,7 +32,14 @@ describe Oystercard do
     context 'new oystercards' do
       it { is_expected.not_to be_in_journey}
     end
+  end
 
+  describe "#touch_in" do
+    it { is_expected.to respond.to(:touch_in) }
+  end
+
+  describe "#touch_out" do
+    it { is_expected.to respond.to(:touch_out) }
   end
 
 end
