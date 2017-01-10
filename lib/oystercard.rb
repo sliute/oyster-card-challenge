@@ -25,6 +25,7 @@ class Oystercard
   end
 
   def touch_out
+    fail 'Cannot touch out, already touched out!' unless in_journey?
     @in_journey = false
   end
 
