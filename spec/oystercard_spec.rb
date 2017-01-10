@@ -6,6 +6,9 @@ describe Oystercard do
 
   context "on initialisation" do
     it { is_expected.not_to be_in_journey }
+    it 'has an empty journeys array' do
+      expect(oystercard.journeys).to be_empty
+    end
   end
 
   describe "#balance" do
