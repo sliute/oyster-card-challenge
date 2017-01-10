@@ -22,6 +22,13 @@ describe Oystercard do
 
   describe "#deduct" do
     it { is_expected.to respond_to(:deduct) }
+
+    it "deducts a given amount from the balance" do
+        oystercard.top_up(50)
+        oystercard.deduct(10)
+        expect(oystercard.balance).to eq 40
+    end
+
   end
 
 end
