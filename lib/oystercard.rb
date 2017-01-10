@@ -1,3 +1,5 @@
+require_relative "station.rb"
+
 class Oystercard
 
   attr_reader :balance, :entry_station, :journeys, :exit_station
