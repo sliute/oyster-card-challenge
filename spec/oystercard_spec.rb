@@ -36,6 +36,10 @@ describe Oystercard do
         oystercard.touch_in
         is_expected.to be_in_journey
       end
+      it "remembers the touch in station" do
+        oystercard.touch_in(:borough)
+        expect(oystercard.entry_station).to eq :borough
+      end
       context "already touched in" do
         it "raises error" do
             message = "Cannot touch in, already touched in!"
