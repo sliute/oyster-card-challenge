@@ -2,7 +2,8 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
-  let(:station) { instance_double("Station") }
+  let(:entry_station) { instance_double("Station") }
+  let(:exit_station) { instance_double("Station") }
 
   context "on initialisation" do
     it { is_expected.not_to be_in_journey }
@@ -39,13 +40,13 @@ describe Oystercard do
     context "balance is MIN_JOURNEY_BALANCE + 10" do
       before(:each) do
         oystercard.top_up(min_journey_balance+ 10)
-        oystercard.touch_in(station)
+        oystercard.touch_in(entry_station)
       end
       it 'in_journey is true once touched in' do
         is_expected.to be_in_journey
       end
       it "remembers the touch in station" do
-        expect(oystercard.entry_station).to eq station
+        expect(oystercard.entry_station).to eq entry_station
       end
       context "already touched in" do
         it "raises error" do
@@ -58,7 +59,7 @@ describe Oystercard do
       it "raises error" do
         message = "Cannot touch in, you do not have sufficient balance!"
         oystercard.top_up(min_journey_balance - 0.01)
-        expect{oystercard.touch_in(station)}.to raise_error(RuntimeError, message)
+        expect{oystercard.touch_in(entry_station)}.to raise_error(RuntimeError, message)
       end
     end
   end
@@ -68,20 +69,34 @@ describe Oystercard do
       oystercard.top_up(min_journey_balance+ 10)
     end
     it "in_journey is false once touched out" do
-      oystercard.touch_in(station)
+      oystercard.touch_in(entry_station)
       oystercard.touch_out
       is_expected.not_to be_in_journey
     end
 
     it "entry_station is nil once touched out" do
-      oystercard.touch_in(station)
+      oystercard.touch_in(entry_station)
       oystercard.touch_out
       expect(oystercard.entry_station).to eq nil
     end
 
     it 'deducts the journey fare from the oystercard balance' do
-      oystercard.touch_in(station)
+      oystercard.touch_in(entry_station)
       expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
+    end
+
+    it "sets exit_station" do
+      oystercard.touch_in(entry_station)
+      oystercard.touch_out(exit_station)
+      expect(oystercard.exit_station).to eq exit_station
+    end
+
+    it "adds journey to journeys array" do
+      pending "changes to touch out method"
+      oystercard.touch_in(entry_station)
+      oystercard.touch_out(exit_station)
+      journey = { entry: entry_station, exit: exit_station }
+      expect(oystercard.journeys).to include(journey)
     end
 
     context "already touched out" do
