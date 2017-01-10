@@ -70,19 +70,19 @@ describe Oystercard do
     end
     it "in_journey is false once touched out" do
       oystercard.touch_in(entry_station)
-      oystercard.touch_out
+      oystercard.touch_out(exit_station)
       is_expected.not_to be_in_journey
     end
 
     it "entry_station is nil once touched out" do
       oystercard.touch_in(entry_station)
-      oystercard.touch_out
+      oystercard.touch_out(exit_station)
       expect(oystercard.entry_station).to eq nil
     end
 
     it 'deducts the journey fare from the oystercard balance' do
       oystercard.touch_in(entry_station)
-      expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
+      expect { oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
     end
 
     it "sets exit_station" do
@@ -102,7 +102,7 @@ describe Oystercard do
     context "already touched out" do
       it 'raise error' do
         message = 'Cannot touch out, already touched out!'
-        expect { oystercard.touch_out }.to raise_error(RuntimeError, message)
+        expect { oystercard.touch_out(exit_station) }.to raise_error(RuntimeError, message)
       end
     end
   end
