@@ -20,6 +20,7 @@ class Oystercard
   end
 
   def touch_in
+    fail 'Cannot touch in, already touched in!' if in_journey?
     @in_journey = true
   end
 
