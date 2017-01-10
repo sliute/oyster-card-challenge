@@ -4,6 +4,7 @@ class Oystercard
   alias_method :in_journey?, :in_journey
 
   MAX_BALANCE = 90
+  MIN_JOURNEY_BALANCE = 1
 
   def initialize
     @balance = 0
@@ -20,6 +21,7 @@ class Oystercard
   end
 
   def touch_in
+    fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
     fail 'Cannot touch in, already touched in!' if in_journey?
     @in_journey = true
   end
@@ -33,6 +35,10 @@ private
 
   def exceeds_max_balance?(top_up_amt)
     (balance + top_up_amt) > MAX_BALANCE
+  end
+
+  def has_sufficient_balance?
+    balance >= MIN_JOURNEY_BALANCE
   end
 
 end
