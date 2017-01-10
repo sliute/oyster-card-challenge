@@ -12,6 +12,9 @@ class Oystercard
     @balance += top_up_amt
   end
 
+  def deduct
+  end
+
 private
 
   def exceeds_max_balance?(top_up_amt)
