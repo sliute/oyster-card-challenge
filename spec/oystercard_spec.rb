@@ -46,6 +46,13 @@ describe Oystercard do
         expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
       end
     end
+    context "insufficient balance" do
+      it "raises error" do
+        message = "Cannot touch in, you do not have sufficient balance!"
+        oystercard.top_up(0.99)
+        expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+      end
+    end
   end
 
   describe "#touch_out" do
