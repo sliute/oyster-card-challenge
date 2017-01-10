@@ -12,7 +12,8 @@ class Oystercard
     @balance += top_up_amt
   end
 
-  def deduct
+  def deduct(deduct_amt)
+    @balance -= deduct_amt
   end
 
 private
