@@ -5,9 +5,7 @@ describe Oystercard do
   let(:station) { instance_double("Station") }
 
   context "on initialisation" do
-    it "defaults to nil entry station" do
-      expect(oystercard.entry_station).to eq nil
-    end
+    it { is_expected.not_to be_in_journey }
   end
 
   describe "#balance" do

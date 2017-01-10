@@ -1,14 +1,12 @@
 class Oystercard
 
-  attr_reader :balance, :in_journey, :entry_station
-  alias_method :in_journey?, :in_journey
+  attr_reader :balance, :entry_station
 
   MAX_BALANCE = 90
   MIN_JOURNEY_BALANCE = 1
 
   def initialize
     @balance = 0
-    @in_journey = false
     @entry_station = nil
   end
 
@@ -21,15 +19,17 @@ class Oystercard
   def touch_in(station)
     fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
     fail 'Cannot touch in, already touched in!' if in_journey?
-    @in_journey = true
     @entry_station = station
   end
 
   def touch_out
     fail 'Cannot touch out, already touched out!' unless in_journey?
-    @in_journey = false
     deduct(1)
     @entry_station = nil
+  end
+
+  def in_journey?
+    entry_station ? true : false
   end
 
 private
