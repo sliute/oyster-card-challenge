@@ -39,10 +39,21 @@ describe Oystercard do
       oystercard.touch_in
       is_expected.to be_in_journey
     end
+    context "already touched in" do    
+      it "raises error" do
+        message = "Cannot touch in, already touched in!"
+        oystercard.touch_in
+        expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+      end
+    end
   end
 
   describe "#touch_out" do
-    it { is_expected.to respond_to(:touch_out) }
+    it "in_journey is false once touched out" do
+      oystercard.touch_in
+      oystercard.touch_out
+      is_expected.not_to be_in_journey
+    end
   end
 
 end
