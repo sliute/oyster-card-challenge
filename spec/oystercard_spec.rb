@@ -2,6 +2,7 @@ require 'oystercard'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
+  let(:station) { instance_double("Station") }
 
   describe "#balance" do
     it 'initialises with a balance of 0' do
@@ -33,18 +34,18 @@ describe Oystercard do
         oystercard.top_up(min_journey_balance+ 10)
       end
       it 'in_journey is true once touched in' do
-        oystercard.touch_in
+        oystercard.touch_in(station)
         is_expected.to be_in_journey
       end
       it "remembers the touch in station" do
-        oystercard.touch_in(:borough)
-        expect(oystercard.entry_station).to eq :borough
+        oystercard.touch_in(station)
+        expect(oystercard.entry_station).to eq station
       end
       context "already touched in" do
         it "raises error" do
             message = "Cannot touch in, already touched in!"
-            oystercard.touch_in
-            expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+            oystercard.touch_in(station)
+            expect{oystercard.touch_in(subject)}.to raise_error(RuntimeError, message)
         end
       end
     end
@@ -52,7 +53,7 @@ describe Oystercard do
       it "raises error" do
         message = "Cannot touch in, you do not have sufficient balance!"
         oystercard.top_up(min_journey_balance - 0.01)
-        expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+        expect{oystercard.touch_in(station)}.to raise_error(RuntimeError, message)
       end
     end
   end
@@ -62,13 +63,13 @@ describe Oystercard do
       oystercard.top_up(min_journey_balance+ 10)
     end
     it "in_journey is false once touched out" do
-      oystercard.touch_in
+      oystercard.touch_in(station)
       oystercard.touch_out
       is_expected.not_to be_in_journey
     end
 
     it 'deducts the journey fare from the oystercard balance' do
-      oystercard.touch_in
+      oystercard.touch_in(station)
       expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
     end
 
