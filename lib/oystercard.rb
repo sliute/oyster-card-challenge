@@ -16,9 +16,6 @@ class Oystercard
     @balance += top_up_amt
   end
 
-  def deduct(deduct_amt)
-    @balance -= deduct_amt
-  end
 
   def touch_in
     fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
@@ -29,6 +26,7 @@ class Oystercard
   def touch_out
     fail 'Cannot touch out, already touched out!' unless in_journey?
     @in_journey = false
+    deduct(1)
   end
 
 private
@@ -39,6 +37,10 @@ private
 
   def has_sufficient_balance?
     balance >= MIN_JOURNEY_BALANCE
+  end
+
+  def deduct(deduct_amt)
+    @balance -= deduct_amt
   end
 
 end

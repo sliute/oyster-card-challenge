@@ -20,45 +20,38 @@ describe Oystercard do
     end
   end
 
-  describe "#deduct" do
-    it "deducts a given amount from the balance" do
-        oystercard.top_up(50)
-        oystercard.deduct(10)
-        expect(oystercard.balance).to eq 40
-    end
-  end
-
   describe '#in_journey?' do
     context 'new oystercards' do
       it { is_expected.not_to be_in_journey}
     end
   end
 
-  context "balance is MIN_JOURNEY_BALANCE + 10" do
-    min_journey_balance = described_class::MIN_JOURNEY_BALANCE
-    before(:each) do
-      oystercard.top_up(min_journey_balance+ 10)
-    end
-    describe "#touch_in" do
+  describe "#touch_in" do
+      min_journey_balance = described_class::MIN_JOURNEY_BALANCE
+    context "balance is MIN_JOURNEY_BALANCE + 10" do
+      before(:each) do
+        oystercard.top_up(min_journey_balance+ 10)
+      end
       it 'in_journey is true once touched in' do
         oystercard.touch_in
         is_expected.to be_in_journey
       end
       context "already touched in" do
         it "raises error" do
-          message = "Cannot touch in, already touched in!"
-          oystercard.touch_in
-          expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
-        end
-      end
-      context "insufficient balance" do
-        it "raises error" do
-          message = "Cannot touch in, you do not have sufficient balance!"
-          oystercard.deduct(min_journey_balance + 9.01)
-          expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+            message = "Cannot touch in, already touched in!"
+            oystercard.touch_in
+            expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
         end
       end
     end
+    context "insufficient balance" do
+      it "raises error" do
+        message = "Cannot touch in, you do not have sufficient balance!"
+        oystercard.top_up(min_journey_balance - 0.01)
+        expect{oystercard.touch_in}.to raise_error(RuntimeError, message)
+      end
+    end
+  end
 
     describe "#touch_out" do
       it "in_journey is false once touched out" do
@@ -66,6 +59,12 @@ describe Oystercard do
         oystercard.touch_out
         is_expected.not_to be_in_journey
       end
+
+      it 'deducts the journey fare from the oystercard balance' do
+        oystercard.touch_in
+        expect { oystercard.touch_out}.to change{oystercard.balance}.by(-1)
+      end
+
       context "already touched out" do
         it 'raise error' do
           message = 'Cannot touch out, already touched out!'
