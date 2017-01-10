@@ -21,18 +21,18 @@ describe Oystercard do
   end
 
   describe "#deduct" do
-    it { is_expected.to respond_to(:deduct) }
-
     it "deducts a given amount from the balance" do
         oystercard.top_up(50)
         oystercard.deduct(10)
         expect(oystercard.balance).to eq 40
     end
-
   end
 
   describe '#in_journey?' do
-    it { is_expected.to respond_to(:in_journey?) }
+    context 'new oystercards' do
+      it { is_expected.not_to be_in_journey}
+    end
+
   end
 
 end
