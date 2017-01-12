@@ -21,13 +21,10 @@ class JourneyLog
     @current_journey ? complete_current_journey(exit_station) : no_current_journey_penalty(exit_station)
   end
 
-
-
-
   private
 
   def create_current_journey
-    @current_journey = Journey.new
+    @current_journey = @journey_class.new
   end
 
   def empty_current_journey
@@ -47,7 +44,8 @@ class JourneyLog
 
   def incomplete_journey_penalty
     @current_journey.finish(nil)
-    deduct(@current_journey.fare)
+    @oystercard.deduct(@current_journey.fare)
+    add_journey
     empty_current_journey
   end
 

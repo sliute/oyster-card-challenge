@@ -4,14 +4,12 @@ require_relative "journey_log.rb"
 
 class Oystercard
 
-  attr_reader :balance, :current_journey, :journey_log # :journeys
+  attr_reader :balance, :journey_log
 
   MAX_BALANCE = 90
 
   def initialize
     @balance = 0
-    @current_journey = nil
-    # @journeys = []
     @journey_log = JourneyLog.new(Journey, self)
   end
 
