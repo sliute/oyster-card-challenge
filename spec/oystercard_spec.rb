@@ -6,13 +6,15 @@ describe Oystercard do
   let(:entry_station) { instance_double("Station") }
   let(:exit_station) { instance_double("Station") }
   let(:journey) { instance_double("Journey") }
+  let(:journey_log) { instance_double("JourneyLog") }
 
   min_journey_balance = Journey::MIN_FARE
   penalty_fare = Journey::PENALTY_FARE
 
   describe "#initialize" do
-    it 'has an empty journeys array' do
-      expect(oystercard.journeys).to be_empty
+    it 'has an empty journeys log' do
+      allow(journey_log).to receive(:journeys) { [] }
+      expect(oystercard.journey_log.journeys).to be_empty
     end
     it 'balance is 0' do
       expect(oystercard.balance).to eq 0

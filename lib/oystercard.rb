@@ -1,9 +1,10 @@
 require_relative "station.rb"
 require_relative "journey.rb"
+require_relative "journey_log.rb"
 
 class Oystercard
 
-  attr_reader :balance, :journeys, :current_journey
+  attr_reader :balance, :journeys, :current_journey, :journey_log
 
   MAX_BALANCE = 90
 
@@ -11,6 +12,7 @@ class Oystercard
     @balance = 0
     @current_journey = nil
     @journeys = []
+    @journey_log = JourneyLog.new(Journey)
   end
 
   def top_up(top_up_amt)
