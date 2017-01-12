@@ -53,6 +53,8 @@ describe Oystercard do
       oystercard.top_up(min_journey_balance+ 10)
       oystercard.touch_in(entry_station)
       allow(journey_log).to receive(:finish)
+      allow(entry_station).to receive(:zone) { 2 }
+      allow(exit_station).to receive(:zone) { 2 }
       expect {oystercard.touch_out(exit_station)}.not_to raise_error
     end
   end

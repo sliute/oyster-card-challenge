@@ -11,6 +11,8 @@ describe JourneyLog do
 
   before(:each) do
     allow(oystercard).to receive(:deduct)
+    allow(entry_station).to receive(:zone) { 2 }
+    allow(exit_station).to receive(:zone) { 2 }
   end
 
 
