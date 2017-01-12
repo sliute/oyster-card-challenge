@@ -27,14 +27,7 @@ class Oystercard
   end
 
   def touch_out(exit_station)
-    if @current_journey
-      @current_journey.finish(exit_station)
-      deduct(@current_journey.fare)
-      add_journey
-      empty_current_journey
-    else
-      no_current_journey_penalty(exit_station)
-    end
+    @current_journey ? complete_current_journey(exit_station) : no_current_journey_penalty(exit_station)
   end
 
   private
@@ -49,6 +42,13 @@ class Oystercard
 
   def add_journey
     @journeys << @current_journey
+    empty_current_journey
+  end
+
+  def complete_current_journey(exit_station)
+    @current_journey.finish(exit_station)
+    deduct(@current_journey.fare)
+    add_journey
   end
 
   def exceeds_max_balance?(top_up_amt)
@@ -71,10 +71,7 @@ class Oystercard
 
   def no_current_journey_penalty(exit_station)
     create_current_journey
-    @current_journey.finish(exit_station)
-    deduct(@current_journey.fare)
-    add_journey
-    empty_current_journey
+    complete_current_journey(exit_station)
   end
 
 end
