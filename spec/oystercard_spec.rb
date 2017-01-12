@@ -12,15 +12,12 @@ describe Oystercard do
   penalty_fare = Journey::PENALTY_FARE
 
   describe "#initialize" do
-    it 'has an empty journeys log' do
+    it 'has an empty journey_log' do
       allow(journey_log).to receive(:journeys) { [] }
       expect(oystercard.journey_log.journeys).to be_empty
     end
     it 'balance is 0' do
       expect(oystercard.balance).to eq 0
-    end
-    it "is not in current journey" do
-      expect(oystercard.current_journey).to be_nil
     end
   end
 
@@ -35,21 +32,13 @@ describe Oystercard do
     end
   end
 
-  describe "#touch_in" do
-    context "with sufficient balance" do
-      before(:each) do
-        oystercard.top_up(min_journey_balance+ 10)
-        oystercard.touch_in(entry_station)
-      end
-      it "creates a @current_journey" do
-        expect(oystercard.current_journey).to be_a(Journey)
-      end
-      context "with incomplete journey" do
-        it "charges penalty" do
-          expect{oystercard.touch_in(entry_station)}.to change{oystercard.balance}.by(-penalty_fare)
-        end
-      end
+  describe "#deduct" do
+    it 'deducts a given amount' do
+      expect {oystercard.deduct(15)}.to change{oystercard.balance}.by -15
     end
+  end
+
+  describe "#touch_in" do
     context "with insufficient balance" do
       it "raises error" do
         message = "Cannot touch in, you do not have sufficient balance!"
@@ -60,30 +49,11 @@ describe Oystercard do
   end
 
   describe "#touch_out" do
-    before(:each) do
+    it 'calls #start on journey_log' do
       oystercard.top_up(min_journey_balance+ 10)
       oystercard.touch_in(entry_station)
-    end
-    context "have touched in" do
-      it "journeys array count increased by 1" do
-        expect{oystercard.touch_out(exit_station)}.to change{oystercard.journeys.count}.by 1
-      end
-    end
-    context "have touched in and out" do
-      before(:each) do
-        oystercard.touch_out(exit_station)
-      end
-      it 'stores a journey in journeys' do
-        expect(oystercard.journeys[-1]).to be_a(Journey)
-      end
-      context "with no current journey" do
-        it 'charge penalty' do
-          expect{oystercard.touch_out(exit_station)}.to change{oystercard.balance}.by(-penalty_fare)
-        end
-      end
-    end
-    it 'deducts the journey fare from the oystercard balance' do
-      expect {oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
+      allow(journey_log).to receive(:finish)
+      expect {oystercard.touch_out(exit_station)}.not_to raise_error
     end
   end
 end
