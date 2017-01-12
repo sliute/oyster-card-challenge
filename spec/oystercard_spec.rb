@@ -12,11 +12,11 @@ describe Oystercard do
   penalty_fare = Journey::PENALTY_FARE
 
   describe "#initialize" do
-    it 'has an empty journey_log' do
+    it 'creates an empty journey_log' do
       allow(journey_log).to receive(:journeys) { [] }
       expect(oystercard.journey_log.journeys).to be_empty
     end
-    it 'balance is 0' do
+    it 'creates a balance of 0' do
       expect(oystercard.balance).to eq 0
     end
   end
@@ -53,6 +53,8 @@ describe Oystercard do
       oystercard.top_up(min_journey_balance+ 10)
       oystercard.touch_in(entry_station)
       allow(journey_log).to receive(:finish)
+      allow(entry_station).to receive(:zone).and_return(2)
+      allow(exit_station).to receive(:zone).and_return(3)
       expect {oystercard.touch_out(exit_station)}.not_to raise_error
     end
   end
