@@ -1,4 +1,5 @@
 require 'oystercard'
+require 'journey'
 
 describe Oystercard do
   subject(:oystercard) { described_class.new }
@@ -6,7 +7,8 @@ describe Oystercard do
   let(:exit_station) { instance_double("Station") }
   let(:journey) { instance_double("Journey") }
 
-  min_journey_balance = described_class::MIN_JOURNEY_BALANCE
+  min_journey_balance = Journey::MIN_FARE
+  penalty_fare = Journey::PENALTY_FARE
 
   describe "#initialize" do
     it 'has an empty journeys array' do
@@ -32,7 +34,7 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
-    context "balance is MIN_JOURNEY_BALANCE + 10" do
+    context "with sufficient balance" do
       before(:each) do
         oystercard.top_up(min_journey_balance+ 10)
         oystercard.touch_in(entry_station)
@@ -40,8 +42,13 @@ describe Oystercard do
       it "creates a @current_journey" do
         expect(oystercard.current_journey).to be_a(Journey)
       end
+      context "with incomplete journey" do
+        it "charges penalty" do
+          expect{oystercard.touch_in(entry_station)}.to change{oystercard.balance}.by(-penalty_fare)
+        end
+      end
     end
-    context "insufficient balance" do
+    context "with insufficient balance" do
       it "raises error" do
         message = "Cannot touch in, you do not have sufficient balance!"
         oystercard.top_up(min_journey_balance - 0.01)

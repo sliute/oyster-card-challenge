@@ -6,7 +6,6 @@ class Oystercard
   attr_reader :balance, :journeys, :current_journey
 
   MAX_BALANCE = 90
-  MIN_JOURNEY_BALANCE = 1
 
   def initialize
     @balance = 0
@@ -22,6 +21,7 @@ class Oystercard
 
   def touch_in(entry_station)
     fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
+    incomplete_journey_penalty if @current_journey
     create_current_journey
     @current_journey.start(entry_station)
   end
@@ -52,11 +52,17 @@ class Oystercard
   end
 
   def has_sufficient_balance?
-    balance >= MIN_JOURNEY_BALANCE
+    balance >= Journey::MIN_FARE
   end
 
   def deduct(deduct_amt)
     @balance -= deduct_amt
+  end
+
+  def incomplete_journey_penalty
+    @current_journey.finish(nil)
+    deduct(@current_journey.fare)
+    empty_current_journey
   end
 
 end
