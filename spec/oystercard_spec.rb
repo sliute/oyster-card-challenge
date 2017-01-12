@@ -64,13 +64,9 @@ describe Oystercard do
       before(:each) do
         oystercard.touch_out(exit_station)
       end
-      it "entry_station is nil once touched out" do
-        expect(oystercard.entry_station).to eq nil
+      it 'stores a journey in journeys' do
+        expect(oystercard.journeys[-1]).to be_a(Journey)
       end
-      it "sets exit_station" do
-        expect(oystercard.exit_station).to eq exit_station
-      end
-
     end
     it 'deducts the journey fare from the oystercard balance' do
       expect {oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
