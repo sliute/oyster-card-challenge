@@ -4,17 +4,19 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:entry_station) { instance_double("Station") }
   let(:exit_station) { instance_double("Station") }
+  let(:journey) { instance_double("Journey") }
 
-  context "on initialisation" do
-    it { is_expected.not_to be_in_journey }
+  min_journey_balance = described_class::MIN_JOURNEY_BALANCE
+
+  describe "#initialize" do
     it 'has an empty journeys array' do
       expect(oystercard.journeys).to be_empty
     end
-  end
-
-  describe "#balance" do
-    it 'initialises with a balance of 0' do
+    it 'balance is 0' do
       expect(oystercard.balance).to eq 0
+    end
+    it "is not in current journey" do
+      expect(oystercard.current_journey).to be_nil
     end
   end
 
@@ -29,30 +31,14 @@ describe Oystercard do
     end
   end
 
-  describe '#in_journey?' do
-    context 'new oystercards' do
-      it { is_expected.not_to be_in_journey}
-    end
-  end
-
-  min_journey_balance = described_class::MIN_JOURNEY_BALANCE
   describe "#touch_in" do
     context "balance is MIN_JOURNEY_BALANCE + 10" do
       before(:each) do
         oystercard.top_up(min_journey_balance+ 10)
         oystercard.touch_in(entry_station)
       end
-      it 'in_journey is true once touched in' do
-        is_expected.to be_in_journey
-      end
-      it "remembers the touch in station" do
-        expect(oystercard.entry_station).to eq entry_station
-      end
-      context "already touched in" do
-        it "raises error" do
-            message = "Cannot touch in, already touched in!"
-            expect{oystercard.touch_in(subject)}.to raise_error(RuntimeError, message)
-        end
+      it "creates a @current_journey" do
+        expect(oystercard.current_journey).to be_a(Journey)
       end
     end
     context "insufficient balance" do
@@ -69,30 +55,22 @@ describe Oystercard do
       oystercard.top_up(min_journey_balance+ 10)
       oystercard.touch_in(entry_station)
     end
+    context "have touched in" do
+      it "journeys array count increased by 1" do
+        expect{oystercard.touch_out(exit_station)}.to change{oystercard.journeys.count}.by 1
+      end
+    end
     context "have touched in and out" do
       before(:each) do
         oystercard.touch_out(exit_station)
       end
-      it "in_journey is false once touched out" do
-        is_expected.not_to be_in_journey
-      end
-
       it "entry_station is nil once touched out" do
         expect(oystercard.entry_station).to eq nil
       end
       it "sets exit_station" do
         expect(oystercard.exit_station).to eq exit_station
       end
-      it "adds journey to journeys array" do
-        journey = { entry: entry_station, exit: exit_station }
-        expect(oystercard.journeys).to include(journey)
-      end
-      context "already touched out" do
-        it 'raise error' do
-          message = 'Cannot touch out, already touched out!'
-          expect { oystercard.touch_out(exit_station) }.to raise_error(RuntimeError, message)
-        end
-      end
+
     end
     it 'deducts the journey fare from the oystercard balance' do
       expect {oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)

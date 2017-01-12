@@ -1,8 +1,9 @@
 require_relative "station.rb"
+require_relative "journey.rb"
 
 class Oystercard
 
-  attr_reader :balance, :entry_station, :journeys, :exit_station
+  attr_reader :balance, :entry_station, :journeys, :exit_station, :current_journey
 
   MAX_BALANCE = 90
   MIN_JOURNEY_BALANCE = 1
@@ -11,6 +12,7 @@ class Oystercard
     @balance = 0
     @entry_station = nil
     @exit_station = nil
+    @current_journey = nil
     @journeys = []
   end
 
@@ -22,27 +24,27 @@ class Oystercard
 
   def touch_in(entry_station)
     fail 'Cannot touch in, you do not have sufficient balance!' unless has_sufficient_balance?
-    fail 'Cannot touch in, already touched in!' if in_journey?
-    @entry_station = entry_station
-    @exit_station = nil
+    # @entry_station = entry_station
+    #@exit_station = nil
+    @current_journey = Journey.new
+    @current_journey.start(entry_station)
   end
 
   def touch_out(exit_station)
-    fail 'Cannot touch out, already touched out!' unless in_journey?
     deduct(1)
     @exit_station = exit_station
     add_journey
     @entry_station = nil
   end
 
-  def in_journey?
-    entry_station ? true : false
-  end
+  # def in_journey?
+  #   entry_station ? true : false
+  # end
 
 private
 
   def add_journey
-    @journeys << { entry: entry_station, exit: exit_station }
+    @journeys << @current_journey
   end
 
   def exceeds_max_balance?(top_up_amt)
