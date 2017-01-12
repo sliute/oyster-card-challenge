@@ -32,7 +32,7 @@ describe JourneyLog do
     end
   end
 
-  describe "#start + #current_journey" do
+  describe "#start" do
     it "creates a @current_journey" do
       journey_log.start(entry_station)
       expect(journey_log.current_journey).to be_a(Journey)

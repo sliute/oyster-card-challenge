@@ -1,6 +1,7 @@
 require 'journey'
 
 describe Journey do
+
   subject(:journey) { described_class.new }
   let(:entry_station) { instance_double("Station") }
   let(:exit_station) { instance_double("Station") }
