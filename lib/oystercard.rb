@@ -27,10 +27,14 @@ class Oystercard
   end
 
   def touch_out(exit_station)
-    deduct(1)
-    @current_journey.finish(exit_station)
-    add_journey
-    empty_current_journey
+    if @current_journey
+      @current_journey.finish(exit_station)
+      deduct(@current_journey.fare)
+      add_journey
+      empty_current_journey
+    else
+      no_current_journey_penalty(exit_station)
+    end
   end
 
   private
@@ -62,6 +66,14 @@ class Oystercard
   def incomplete_journey_penalty
     @current_journey.finish(nil)
     deduct(@current_journey.fare)
+    empty_current_journey
+  end
+
+  def no_current_journey_penalty(exit_station)
+    create_current_journey
+    @current_journey.finish(exit_station)
+    deduct(@current_journey.fare)
+    add_journey
     empty_current_journey
   end
 

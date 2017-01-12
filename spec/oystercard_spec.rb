@@ -74,6 +74,11 @@ describe Oystercard do
       it 'stores a journey in journeys' do
         expect(oystercard.journeys[-1]).to be_a(Journey)
       end
+      context "with no current journey" do
+        it 'charge penalty' do
+          expect{oystercard.touch_out(exit_station)}.to change{oystercard.balance}.by(-penalty_fare)
+        end
+      end
     end
     it 'deducts the journey fare from the oystercard balance' do
       expect {oystercard.touch_out(exit_station) }.to change{oystercard.balance}.by(-1)
