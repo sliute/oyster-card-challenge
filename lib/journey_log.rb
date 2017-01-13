@@ -2,7 +2,7 @@ require_relative 'journey'
 
 class JourneyLog
 
-  attr_reader :journey_class, :journeys, :current_journey, :oystercard
+  attr_reader :current_journey, :journey_class
 
   def initialize(journey_class, oystercard)
     @journey_class = journey_class
@@ -19,6 +19,10 @@ class JourneyLog
 
   def finish(exit_station)
     @current_journey ? complete_current_journey(exit_station) : no_current_journey_penalty(exit_station)
+  end
+
+  def journeys
+    @journeys.dup
   end
 
   private
