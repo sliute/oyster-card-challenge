@@ -5,7 +5,6 @@ describe Oystercard do
   subject(:oystercard) { described_class.new }
   let(:entry_station) { instance_double("Station") }
   let(:exit_station) { instance_double("Station") }
-  let(:journey) { instance_double("Journey") }
   let(:journey_log) { instance_double("JourneyLog") }
 
   min_journey_balance = Journey::MIN_FARE
@@ -46,16 +45,30 @@ describe Oystercard do
         expect{oystercard.touch_in(entry_station)}.to raise_error(RuntimeError, message)
       end
     end
+    context "failed to touch out previous journey" do
+      it "results in penalty fare" do
+        oystercard.top_up(min_journey_balance+ 10)
+        oystercard.touch_in(entry_station)
+        expect { oystercard.touch_in(entry_station) }.to change{ oystercard.balance }.by -penalty_fare
+      end
+    end
   end
 
   describe "#touch_out" do
-    it 'calls #start on journey_log' do
+    before(:each) do
       oystercard.top_up(min_journey_balance+ 10)
+    end
+    it 'causes a correct deduction in balance' do
       oystercard.touch_in(entry_station)
       allow(journey_log).to receive(:finish)
-      allow(entry_station).to receive(:zone).and_return(2)
-      allow(exit_station).to receive(:zone).and_return(3)
-      expect {oystercard.touch_out(exit_station)}.not_to raise_error
+      allow(entry_station).to receive(:zone) { 2 }
+      allow(exit_station).to receive(:zone) { 4 }
+      expect {oystercard.touch_out(exit_station)}.to change{ oystercard.balance }.by -3
+    end
+    context "failed to touch in" do
+      it "results in penalty fare" do
+        expect { oystercard.touch_out(exit_station) }.to change{ oystercard.balance }.by -penalty_fare
+      end
     end
   end
 end

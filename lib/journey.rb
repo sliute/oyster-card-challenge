@@ -29,8 +29,6 @@ class Journey
   private
 
   def calculate_fare
-    MIN_FARE + (@entry_station.zone - @exit_station.zone).abs
+    (entry_station.zone - exit_station.zone).abs + 1 
   end
-
-
 end

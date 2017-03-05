@@ -1,6 +1,7 @@
 require 'journey'
 
 describe Journey do
+
   subject(:journey) { described_class.new }
   let(:entry_station) { instance_double("Station") }
   let(:exit_station) { instance_double("Station") }
@@ -56,6 +57,31 @@ describe Journey do
         allow(entry_station).to receive(:zone) { entry_zone }
         allow(exit_station).to receive(:zone) { exit_zone }
         expect(journey.fare).to eq(described_class::MIN_FARE + (entry_zone - exit_zone).abs)
+
+      it 'returns the fare of £1 when within same zone' do
+        allow(entry_station).to receive(:zone) { 2 }
+        allow(exit_station).to receive(:zone) { 2 }
+        expect(journey.fare).to eq 1
+      end
+      it 'returns the fare of £2 when travelled 1 zone' do
+        allow(entry_station).to receive(:zone) { 2 }
+        allow(exit_station).to receive(:zone) { 3 }
+        expect(journey.fare).to eq 2
+      end
+      it 'returns the fare of £3 when travelled 2 zones' do
+        allow(entry_station).to receive(:zone) { 2 }
+        allow(exit_station).to receive(:zone) { 4 }
+        expect(journey.fare).to eq 3
+      end
+      it 'returns the fare of £4 when travelled 3 zones' do
+        allow(entry_station).to receive(:zone) { 2 }
+        allow(exit_station).to receive(:zone) { 5 }
+        expect(journey.fare).to eq 4
+      end
+      it 'returns the fare of £5 when travelled 4 zones' do
+        allow(entry_station).to receive(:zone) { 6 }
+        allow(exit_station).to receive(:zone) { 2 }
+        expect(journey.fare).to eq 5
       end
     end
 

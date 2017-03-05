@@ -9,11 +9,5 @@ describe Station do
     it 'shows a zone instance variable' do
       expect(station.zone).to eq 1
     end
-
-
-
-
-
   end
-
 end
